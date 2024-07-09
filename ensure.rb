@@ -48,13 +48,13 @@ class Site
     return false
   end
 
-
+  # Notification d’une erreur
   def notify_error
     `terminal-notifier -sound default -title "PROBLÈME DE SITE" -message "Le site #{url} ne répond plus…"`
   end
 
   def term_found?
-    get_page.downcase.match?(term_searched.downcase)
+    get_page.force_encoding('UTF-8').downcase.match?(term_searched.downcase)
   end
 
   def check_command
@@ -77,7 +77,7 @@ class Site
   class << self
     def log(resultat)
       File.open(log_path,'a') do |f|
-        f.write "Check du #{Time.now} : #{resultat}"
+        f.write "Check du #{Time.now} : #{resultat}\n"
       end
     end
     def log_path
@@ -92,7 +92,7 @@ nombre_succes = 0
 nombre_echecs = 0
 
 sites_file = File.join(__dir__,'SITES.TXT')
-IO.read(sites_file).strip.split("\n").each do |url|
+IO.read(sites_file, encoding: 'UTF-8').strip.split("\n").each do |url|
   if WebSiteEnsurer::Site.new(*(url.split(';'))).check
     nombre_succes += 1
   else

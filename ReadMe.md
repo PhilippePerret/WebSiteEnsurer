@@ -35,3 +35,44 @@ crontab -e
 ~~~
 
 … pour checker les sites toutes les heures, à la demie.
+
+
+## Problème de cron
+
+Si une erreur se produit mais qu’aucun message d’erreur n’est retourné, on peut utiliser `launchd` pour remplacer le crontab, qui est plus verbeux.
+
+Pour ce faire, créer un fichier `com.philou.cronjob.plist ` dans `~/Library/LaunchAgents` et y copier le code :
+
+~~~
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.philou.cronjob</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/Users/philippeperret/.rbenv/shims/ruby</string>
+      <string>/Users/philippeperret/Programmes/WebSiteEnsurer/ensure.rb</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>120</integer> <!-- Exécute toutes x secondes -->
+    <key>StandardOutPath</key>
+    <string>/Users/philippeperret/Programmes/WebSiteEnsurer/output.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/philippeperret/Programmes/WebSiteEnsurer/error.log</string>
+  </dict>
+</plist>
+~~~
+
+Lancer cette boucle avec :
+
+~~~
+launchctl load ~/Library/LaunchAgents/com.philou.cronjob.plist 
+~~~
+
+L’arrêter lorsque le problème est résolu avec :
+
+~~~
+launchctl unload ~/Library/LaunchAgents/com.philou.cronjob.plist 
+~~~
