@@ -40,14 +40,16 @@ class Site
 
   def success
     # puts "#{url} OK".vert
+    return true
   end
 
   def failure
     notify_error
+    return false
   end
 
 
-  def notify_error(msg)
+  def notify_error
     `terminal-notifier -sound default -title "PROBLÈME DE SITE" -message "Le site #{url} ne répond plus…"`
   end
 
