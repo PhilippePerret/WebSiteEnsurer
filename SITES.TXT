@@ -1,3 +1,5 @@
 https://www.atelier-icare.net;atelier icare
 https://www.philippeperret.fr;philippe perret
 https://icare-editions.fr;icare éditions
+https://icare-editions.fr/?r=publications;Publications
+https://www.ge2026.fr;GROUPE D'ÉCRITURE

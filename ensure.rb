@@ -1,5 +1,4 @@
-#!/usr/bin/env ruby -U
-# 
+#!/usr/bin/ruby3.0
 
 require 'clir'
 
@@ -17,8 +16,10 @@ class Site
   def check
     res = %x(#{check_command})
     if res.split(' ')[-1] == "200"
-      # <= OK
-      if not(term_searched) || term_found?
+      # <= OK l'url existe
+      if term_searched && !term_found?
+        failure("l'URL #{url} répond mais le terme « #{term_searched} » est introuvable.")
+      else
         success
       end
     else
@@ -33,7 +34,7 @@ class Site
         # puts "#{url} NOT OK".rouge
         # puts "HEADER:\n#{get_header}".rouge
         # puts "PAGE:\n#{get_page}".bleu
-        failure
+        failure("L'URL est #{url} est inatteignable.")
       end
     end
   end
@@ -43,14 +44,14 @@ class Site
     return true
   end
 
-  def failure
-    notify_error
+  def failure(errMsg)
+    notify_error(errMsg)
     return false
   end
 
   # Notification d’une erreur
-  def notify_error
-    `terminal-notifier -sound default -title "PROBLÈME DE SITE" -message "Le site #{url} ne répond plus…"`
+  def notify_error(errMsg)
+    `terminal-notifier -sound default -title "PROBLÈME DE SITE" -message "#{errMsg}…"`
   end
 
   def term_found?
