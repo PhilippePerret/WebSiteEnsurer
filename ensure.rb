@@ -1,6 +1,6 @@
-#!/usr/bin/ruby3.0
+#!/usr/bin/env ruby
 
-require 'clir'
+require 'date'
 
 module WebSiteEnsurer
 class Site
@@ -91,13 +91,27 @@ end #/module WebSiteEnsurer
 
 nombre_succes = 0
 nombre_echecs = 0
+bons = []
+bads = []
+checks = [] # le 1er de chaque mois
 
 sites_file = File.join(__dir__,'SITES.TXT')
 IO.read(sites_file, encoding: 'UTF-8').strip.split("\n").each do |url|
-  if WebSiteEnsurer::Site.new(*(url.split(';'))).check
+  url, term = url.split(';')
+  phrase = "#{url} (avec #{term})"
+  if WebSiteEnsurer::Site.new(url, term).check
     nombre_succes += 1
+    checks << "👍 #{phrase}"
   else
     nombre_echecs += 1
+    bads << phrase
+    checks << "💣 #{phrase}"
   end
 end
 WebSiteEnsurer::Site.log("Success: #{nombre_succes} Failures: #{nombre_echecs}")
+if nombre_echecs > 0
+  WebSiteEnsurer::Site.log("\tFailures:\n\t#{bads.join("\n\t")}")
+end
+if Date.today.day == 1
+  WebSiteEnsurer::Site.log("\tDetails:\n\t#{checks.join("\n\t")}")
+end
